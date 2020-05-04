@@ -1,6 +1,10 @@
 import React from 'react';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, Card, CardActionArea, CardContent, CardMedia, CardActions, Divider, Link } from '@material-ui/core'
+import { Typography, Grid, Card, CardActionArea, CardContent, CardMedia, CardActions, Divider, Link, Button } from '@material-ui/core'
+import { addComment } from '../redux/actions/commentActions'
+import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
   mainGrid: {
@@ -26,40 +30,68 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FeedCard(props) {
+const FeedCard = ({addComment, post, onClickPost, onProfileClick }) => {
   const classes = useStyles();
+  const [comment, setComment] = React.useState("");
+
+  const submit = async (e) => {
+    e.preventDefault();
+    addComment(post._id, comment).then(() => setComment(''));
+  }
   return (
     <Grid item className={classes.mainGrid} xs={12} md={12}>
       <Card className={classes.card} elevation={3}>
-        <CardActionArea onClick={props.onClickPost}>
+        <CardActionArea>
           <CardContent>
             <Typography component="subtitle1" variant="subtitle1">
-              <b>{props.post.title}</b>
+              <Button onClick={()=>onProfileClick(post.author._id)}><b>{post.author.username}</b></Button>
             </Typography>
           </CardContent>
+          <Divider />
           <CardMedia
             className={classes.media}
-            image={props.post.image}
+            image={post.image}
             title="Image title"
+            onClick={onClickPost}
           />
           <CardContent>
             <Typography component="subtitle2" variant="subtitle2">
-            {props.post.caption}
+              <b>{post.author.username}</b> {post.caption}
             </Typography>
             <Typography component="p" variant="p" color="textSecondary">
-            {props.post.date}
+              {moment(`${post.createdAt}`).startOf('second').fromNow()}
             </Typography>
           </CardContent>
         </CardActionArea>
         <Divider />
-        <CardActions className={classes.inputBox}>
-          <input placeholder="Add a comment" className={classes.commentInput} />
-          <Link
-            component="button"
-            style={{ fontSize: '13px' }}
-          >Post</Link>
-        </CardActions>
+        <div className={classes.inputBox}>
+          <form onSubmit={submit}>
+            <button
+              type="submit"
+              style={{ float: 'right', fontSize: '13px' }}
+            >Post</button>
+            <div style={{
+              overflow: 'hidden',
+              paddingRight: '0.5em'
+            }}>
+              <input type="text" placeholder="Add a comment" className={classes.commentInput} value={comment} onChange={e => setComment(e.target.value)} />
+            </div>
+          </form>
+        </div>
       </Card>
     </Grid>
   );
-} 
+}
+
+FeedCard.propTypes = {
+  addComment: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => ({
+  comments: state.comments,
+})
+
+export default connect(
+  mapStateToProps,
+  { addComment }
+)(FeedCard);

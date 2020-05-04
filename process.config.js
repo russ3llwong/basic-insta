@@ -15,7 +15,7 @@ module.exports = { // pm2 start process.config.js
     },
     {
       name: 'websocket',
-      script: './server/websocket.js',
+      script: './server/websocket-server.js',
       ignore_watch : ["node_modules"],
       watch: true,
       instances: 2,
@@ -23,6 +23,12 @@ module.exports = { // pm2 start process.config.js
     {
       name: 'auth-server',
       script: './server/auth-server.js',
+      ignore_watch : ["node_modules"],
+      watch: true,
+    },
+    {
+      name: 'user-server',
+      script: './server/user-server.js',
       ignore_watch : ["node_modules"],
       watch: true,
     }

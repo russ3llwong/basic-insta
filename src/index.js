@@ -10,8 +10,10 @@ import { insertMessage } from './redux/actions/messageActions';
 import { BrowserRouter as Router } from 'react-router-dom';
 import authReducer from './redux/reducers/authReducer';
 import errorReducer from './redux/reducers/errorReducer';
+import postReducer from './redux/reducers/postReducer'
 
 const rootReducer = combineReducers({
+  posts: postReducer,
   auth: authReducer,
   errors: errorReducer,
 });
@@ -22,9 +24,25 @@ const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (
 
 
 webSocket.onmessage = (message) => {
-  console.log(message)
-  store.dispatch(insertMessage(message.data));
+  const messageObject = JSON.parse(message.data);
+  console.log(messageObject);
+  switch(messageObject.type) {
+    case 'UPDATE_FEED':
+      // TODO: UPDATE FEED... make an axios request or something
+      console.log('UPDATE FEED');
+      break;
+    case 'UPDATE_COMMENT':
+      // TODO: UPDATE COMMENT... make an axios request or something
+      console.log('UPDATE COMMENT', messageObject.postId);
+      break;
+    default:
+      console.log('Unexpected message.');
+  }
 };
+
+webSocket.onerror = e => {
+  console.log(e);
+}
 
 ReactDOM.render(
   <Provider store={store}>

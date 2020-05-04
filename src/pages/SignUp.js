@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(3, 0, 2),
     },
     icon: {
-        fontFamily: 'Satisfy, cursive',
+        fontFamily: 'Abril Fatface, cursive',
         marginBottom: theme.spacing(8)
     }
 }));
@@ -80,7 +80,7 @@ const SignUp = ({ registerUser, history, auth }) => {
             <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
                 <Typography component="h1" variant="h3" className={classes.icon}>
-                        Story
+                        foto.
                 </Typography>
                 <form className={classes.form} onSubmit={submit} noValidate>
                         <Grid container spacing={2}>

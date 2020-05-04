@@ -23,24 +23,19 @@ export const loginUser = userData => dispatch => {
   axios
     .post("/auth/login", userData)
     .then(res => {
-      if ( res.err || res.error || !res.data.valid ) { //
-        throw new Error("Error logging in")
-      }
-      console.log(res)
+      // if ( res.err || res.error || !res.data.valid ) { //
+      //   throw new Error("Error logging in")
+      // }
+      // console.log(res)
 
       const { token, userId } = res.data;
       // save as cookie
       document.cookie = `token=${token}`;
       document.cookie = `userId=${userId}`;
-
       // Save to localStorage
       // Set token to localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
-
-      console.log(localStorage.token);
-      console.log(localStorage.userId);
-
       // Set token to Auth header
       setAuthToken(token);
       // Decode token to get user data
@@ -79,4 +74,4 @@ export const logoutUser = () => dispatch => {
   setAuthToken(false);
   // Set current user to empty object {} which will set isAuthenticated to false
   dispatch(setCurrentUser({}));
-}; 
+};
