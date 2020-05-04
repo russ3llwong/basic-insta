@@ -48,6 +48,14 @@ app.all('/auth*', (req, res) => {
   apiProxy.web(req, res, { target: authServerHost });
 });
 
+const userServerHost = process.env.USER_SERVER_HOST || 'http://localhost:3003';
+console.log(`Auth service proxies to: ${userServerHost}`);
+// for user
+app.all('/user*', (req, res) => {
+  console.log("Routing to User: ", req.url);
+  apiProxy.web(req, res, { target: userServerHost });
+});
+
 const frontEndHost = process.env.FRONT_END_HOST || 'http://localhost:3000';
 console.log(`Front end proxies to: ${frontEndHost}`);
 

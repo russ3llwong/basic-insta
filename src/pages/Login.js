@@ -1,11 +1,9 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -20,7 +18,7 @@ const useStyles = makeStyles(theme => ({
         height: '100vh',
     },
     image: {
-        backgroundImage: 'url(https://source.unsplash.com/random)',
+        backgroundImage: 'url(https://source.unsplash.com/random/1920x1080)',
         backgroundRepeat: 'no-repeat',
         backgroundColor: theme.palette.grey[50],
         backgroundSize: 'cover',
@@ -78,9 +76,6 @@ const Login = ({loginUser, auth, history}) => {
                 <Typography component="h1" variant="h3" className={classes.icon}>
                         Story
                 </Typography>
-                    <Typography component="h1" variant="h5">
-                        Sign in
-          </Typography>
                 <form className={classes.form} onSubmit={submit} noValidate>
                         <TextField
                             variant="outlined"
