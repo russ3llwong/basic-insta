@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const axios = require('axios');
+// redis stuff
 const redis = require('redis');
+const redisClient = redis.createClient();
 const { MongoClient, ObjectID } = require("mongodb");
 const mongoose = require('mongoose');
 const BasicgramsLib = require('./library/posts-lib.js');
@@ -45,6 +48,56 @@ cloudinary.config({
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser());
+app.use((req, res, next) => {
+  // TODO: Pull from body or cookies!?
+  const token = req.cookies.token;
+  const userId = req.cookies.userId;
+  const body = {
+      token,
+      userId
+  };
+
+  redisClient.get(token, (err, cachedValue) => {
+      console.log(err);
+
+      if ( cachedValue ) {
+          console.log('Cache hit!', cachedValue);
+          if ( cachedValue === 'true' ) {
+              console.log(cachedValue);
+              return next();
+          } else {
+              res.status(403);
+              return res.send({
+                  status: false
+              });
+          }
+      } else {
+          axios
+          .post('http://localhost:4000/auth/verify', body)
+          .then(response => {
+            console.log(response);
+              if ( response.data && response.data.valid ) {
+                console.log(response);
+                  redisClient.set(token, true);
+                  return next();
+              } else {
+                  redisClient.set(token, false);
+                  res.status(403);
+                  return res.send({
+                      status: false
+                  });
+              }
+          })
+          .catch((e) => {
+              console.log(e);
+              res.status(404);
+              return res.send({
+                  status: false
+              });
+          })
+      }
+  });
+});
 
 
 const PORT = 5000;

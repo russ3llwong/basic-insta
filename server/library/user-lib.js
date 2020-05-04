@@ -142,7 +142,7 @@ class UserLibrary {
             }
 
             let valid = false;
-            if (user && user.token === token) valid = true;
+            if (user && String(token) === String(user.token)) valid = true;
 
             if (res) {
                 res.send({

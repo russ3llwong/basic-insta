@@ -6,6 +6,8 @@ const app = express();
 const appServer = server.createServer(app);
 const apiProxy = httpProxy.createProxyServer(app);
 
+const GATEWAY_PORT = 4000;
+
 const wsProxy = httpProxy.createProxyServer({
   target: process.env.WEBSOCKET_HOST || 'http://localhost:6000',
   ws: true,
@@ -22,6 +24,12 @@ wsProxy.on('error', (err, req, socket) => {
   socket.end();
 });
 
+// web socket gateway.
+appServer.on('upgrade', (req, socket, head) => {
+  console.log('upgrade ws here');
+  wsProxy.ws(req, socket, head);
+});
+
 const fotogramHost = process.env.FOTOGRAM_HOST || 'http://localhost:5000';
 console.log(`Fotogram end proxies to: ${fotogramHost}`);
 app.all('/fotogram*', (req, res) => {
@@ -35,11 +43,6 @@ app.all('/websocket*', (req, res) => {
   apiProxy.web(req, res, { target: websocketHost });
 });
 
-appServer.on('upgrade', (req, socket, head) => { //web socket gateway
-  console.log('upgrade ws here');
-  wsProxy.ws(req, socket, head);
-});
-
 const authServerHost = process.env.AUTH_SERVER_HOST || 'http://localhost:3002';
 console.log(`Auth service proxies to: ${authServerHost}`);
 app.all('/auth*', (req, res) => {
@@ -49,7 +52,7 @@ app.all('/auth*', (req, res) => {
 });
 
 const userServerHost = process.env.USER_SERVER_HOST || 'http://localhost:3003';
-console.log(`Auth service proxies to: ${userServerHost}`);
+console.log(`User service proxies to: ${userServerHost}`);
 // for user
 app.all('/user*', (req, res) => {
   console.log("Routing to User: ", req.url);
@@ -64,5 +67,5 @@ app.all('/*', (req, res) => {
   apiProxy.web(req, res, { target: frontEndHost });
 });
 
-appServer.listen(4000);
+appServer.listen(GATEWAY_PORT);
 console.log('Gateway started\n\n');
