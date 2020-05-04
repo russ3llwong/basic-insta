@@ -8,7 +8,7 @@ import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import messageReducer from './redux/reducers/messageReducer';
 import { insertMessage } from './redux/actions/messageActions';
-
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const rootReducer = combineReducers({
   messageReducer,
@@ -26,7 +26,9 @@ webSocket.onmessage = (message) => {
 
 ReactDOM.render(
   <Provider store={store}>
+    <Router>
     <App />
+    </Router>
   </Provider>
   , document.getElementById('root'));
 

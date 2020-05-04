@@ -22,10 +22,10 @@ wsProxy.on('error', (err, req, socket) => {
   socket.end();
 });
 
-const messangerHost = process.env.MESSANGER_HOST || 'http://localhost:5000';
-console.log(`Messanger end proxies to: ${messangerHost}`);
-app.all('/messanger*', (req, res) => {
-  apiProxy.web(req, res, { target: messangerHost });
+const fotogramHost = process.env.FOTOGRAM_HOST || 'http://localhost:5000';
+console.log(`Fotogram end proxies to: ${fotogramHost}`);
+app.all('/fotogram*', (req, res) => {
+  apiProxy.web(req, res, { target: fotogramHost });
 });
 
 const websocketHost = process.env.WEBSOCKET_HOST || 'http://localhost:6000/websocket';

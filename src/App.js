@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { updateMessages, handlTextChange, submitMessage } from './redux/actions/messageActions';
-import './App.css';
+//import './App.css';
+import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 
 const Message = ({ data }) => (<div>{data}</div>);
 
@@ -26,17 +29,11 @@ const App = ({ dispatch, text, messages }) => {
   }
   return (
     <div className="App">
-      <div>
-        <div className="message-area">
-          {messages.map((message, i) => <Message key={i} data={message} />)}
-        </div>
-      </div>
-      <div>
-        <input type="text" value={text} onChange={handleTextChange} />
-      </div>
-      <div>
-        <button onClick={onSubmit}>Submit</button>
-      </div>
+       <Switch>
+        <Route exact path="/" component={Login} /> 
+        <Route path="/login" component={Login} />
+        <Route path="/signup" component={SignUp} />
+      </Switch>
     </div>
   );
 }

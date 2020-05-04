@@ -14,8 +14,8 @@ mongoClient.connect((err) => {
   // move app logic in here
   const app = express();
   app.use(bodyParser.json());
-  // sorry for spelling wrong :(
-  app.post('/messanger/postMessage', (req, res) => {
+  
+  app.post('/fotogram/postMessage', (req, res) => {
     console.log(req.body);
     db.collection('test').insertOne({ data: req.body.message }) // insert to db
       .then(() => console.log('db insert worked'))
@@ -24,7 +24,7 @@ mongoClient.connect((err) => {
     res.send('ok');
   });
 
-  app.get('/messanger/getMessages', (req, res) => {
+  app.get('/fotogram/getMessages', (req, res) => {
     db.collection('test').find({}).toArray()
       .then((result) => {
         res.send(result.map(r => r.data));

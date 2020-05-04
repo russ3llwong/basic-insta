@@ -7,7 +7,7 @@ module.exports = { // pm2 start process.config.js
     },
     {
       name: 'messanger',
-      script: './server/messanger.js',
+      script: './server/fotogram.js',
       watch: true,
     },
     {
