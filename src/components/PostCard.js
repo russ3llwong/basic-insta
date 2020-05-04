@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, CardActions, Link, Card, Hidden, CardMedia, Typography, Grid, List, ListItem, ListItemText, Button } from '@material-ui/core'
-import { fetchCommentsByPost, addComment } from '../redux/actions/commentActions'
+import { fetchCommentsByPost, addComment } from '../redux/actions/commentActions.js'
 import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({

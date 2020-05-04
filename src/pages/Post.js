@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { logoutUser } from '../redux/actions/authActions';
 import { Container} from '@material-ui/core'
+import { logoutUser } from '../redux/actions/authActions';
+
 import TopAppBar from '../components/TopAppBar';
 import BottomAppBar from "../components/BottomAppBar";
 import PostCard from "../components/PostCard";
-
 
 const Post = ({ logoutUser, history, location }) => {
 
@@ -17,18 +17,36 @@ const Post = ({ logoutUser, history, location }) => {
 
     const backButton = e => {
         e.preventDefault();
-        history.push('/feed')
+        if (location.state.flag == 'feed')
+            history.push('/feed');
+        else
+            history.push('/profile')
+    }
+    const onFeedClick = () => {
+        history.push("/feed")
     }
 
+    // Courtesy of stack over flow :D
+    const getCook = (cookiename) => {
+        // Get name followed by anything except a semicolon
+        let cookiestring = RegExp("" + cookiename + "[^;]+").exec(document.cookie);
+        // Return everything after the equal sign, or an empty string if the cookie name not found
+        return decodeURIComponent(!!cookiestring ? cookiestring.toString().replace(/^[^=]+./, "") : "");
+    }
+
+    const onProfileClick = (userId) => {
+        history.push(`/profile/${userId}`);
+    }
+    console.log('location.state', location.state);
     return (
         <React.Fragment>
             <TopAppBar onLogoutClick={onLogoutClick} backButton={backButton} />
             <Container maxWidth="md">
                 <main>
-                    <PostCard post={location.state.post}/>
+                    <PostCard post={location.state.post} onProfileClick={onProfileClick}/>
                 </main>
             </Container>
-            <BottomAppBar />
+            <BottomAppBar onProfileClick={() => onProfileClick(getCook('userId'))} onFeedClick={onFeedClick}/>
         </React.Fragment>
     );
 }

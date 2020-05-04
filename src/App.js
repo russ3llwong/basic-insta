@@ -19,13 +19,13 @@ const App = ({ dispatch }) => {
   }
 
   return (
-    <div className="App">
+    <div>
        <Switch>
         <Route exact path="/" component={Login} /> 
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <PrivateRoute exact path="/feed" component={Feed} />
-        <PrivateRoute exact path="/profile" component={Profile} />
+        <Route exact path="/profile" component={Profile} />
         <Route path="/feed/post" component={Post} />
       </Switch>
     </div>
