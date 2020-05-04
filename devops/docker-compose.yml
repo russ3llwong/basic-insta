@@ -9,6 +9,23 @@ services:
         constraints: [node.role == manager]
     networks:
       - webnet
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - webnet
+  kafka:
+    image : wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ADVERTISED_PORT: "9092"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    networks:
+      - webnet
   mongodb:
     image: mongo
     ports:
@@ -25,11 +42,13 @@ services:
       - webnet
     environment:
       - FRONT_END_HOST=http://frontend:3000
-      - AUTH_SERVER_HOST=http://auth:3002
-      - FOTOGRAM_HOST=http://fotogram:5000
+      - AUTH_SERVER_HOST=http://auth-server:3002
+      - BASICGRAM_HOST=http://basicgram:5000
       - WEBSOCKET_HOST=http://websocket:6000/websocket
+      - USER_SERVER_HOST=http://user-server:3003
+      - KAFKA_HOST=kafka:9092
   frontend:
-    image : russellwong97/react-demo
+    image : russellwong97/react
     ports:
       - "3000:3000"
     deploy:
@@ -38,27 +57,13 @@ services:
         condition: on-failure
     networks:
       - webnet
-  websocket:
-    image : russellwong97/websocket-demo
-    depends_on:
-      - redis
-    ports:
-      - "6000:6000"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    networks:
-      - webnet
-    environment:
-      - REDIS_HOST=redis
-  messanger:
-    image : russellwong97/messanger-demo
+  auth-server:
+    image : ericerer/auth-server
     depends_on:
       - redis
       - mongodb
     ports:
-      - "5000:5000"
+      - "3002:3002"
     deploy:
       replicas: 1
       restart_policy:
@@ -67,6 +72,62 @@ services:
       - webnet
     environment:
       - REDIS_HOST=redis
-      - MONGO_HOST=mongodb://mongodb:27017
+      - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
+      - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka:9092
+  user-server:
+    image : ericerer/user-server
+    depends_on:
+      - redis
+      - mongodb
+    ports:
+      - "3003:3003"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+    environment:
+      - REDIS_HOST=redis
+      - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
+      - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka:9092
+  fotogram:
+    image : ericerer/fotogram
+    depends_on:
+      - redis
+      - mongodb
+      - kafka
+      - zookeeper
+    ports:
+      - "5000:5000"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+    environment:
+      - REDIS_HOST=redis
+      - MONGO_HOST=mongodb://mongodb:27017/basicgram-database
+      - GATEWAY_HOST=http://gateway:4000
+      - KAFKA_HOST=kafka:9092
+  websocket:
+    image : ericerer/websocket
+    depends_on:
+      - redis
+      - kafka
+      - zookeeper
+    ports:
+      - "6000:6000"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+    environment:
+      - KAFKA_HOST=kafka:9092
 networks:
   webnet:
