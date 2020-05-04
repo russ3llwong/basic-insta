@@ -107,16 +107,18 @@ const Feed = ({ logoutUser, history }) => {
         <AppBar position="fixed" color="primary" className={classes.appBarBottom}>
             <Container maxWidth="sm">
                 <Toolbar>
-                    <IconButton edge="start" color="inherit">
+                    <IconButton edge="start" color="inherit" onClick={()=>history.push("/feed")}>
                         <HomeRoundedIcon />
                     </IconButton>
                     <Fab color="primary" aria-label="add" className={classes.fabButton}>
                         <AddIcon />
                     </Fab>
                     <div className={classes.grow} />
-                    <IconButton edge="end" color="inherit">
+                    <Link to="/profile">
+                        <IconButton onClick={() => history.push("/profile")}>
                         <PersonRoundedIcon />
                     </IconButton>
+                    </Link>
                 </Toolbar>
             </Container>
         </AppBar>

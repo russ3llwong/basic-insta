@@ -8,6 +8,7 @@ import {setCurrentUser} from './redux/actions/authActions';
 import PrivateRoute from './PrivateRoute';
 import Feed from './pages/Feed';
 import Post from './pages/Post';
+import Profile from './pages/Profile'
 
 const App = ({ dispatch }) => {
   
@@ -24,6 +25,7 @@ const App = ({ dispatch }) => {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <PrivateRoute exact path="/feed" component={Feed} />
+        <PrivateRoute exact path="/profile" component={Profile} />
         <Route path="/feed/post" component={Post} />
       </Switch>
     </div>

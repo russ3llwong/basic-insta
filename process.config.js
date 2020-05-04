@@ -3,22 +3,28 @@ module.exports = { // pm2 start process.config.js
     {
       name: 'gateway',
       script: './server/gateway.js',
+      ignore_watch : ["node_modules"],
       watch: true,
     },
     {
-      name: 'messanger',
+      name: 'fotogram',
       script: './server/fotogram.js',
+      ignore_watch : ["node_modules"],
       watch: true,
+      instances: 2, 
     },
     {
       name: 'websocket',
       script: './server/websocket.js',
+      ignore_watch : ["node_modules"],
       watch: true,
+      instances: 2,
     },
-  {
-    name: 'auth-server',
-    script: './server/auth-server.js',
-    watch: true,
-  }
+    {
+      name: 'auth-server',
+      script: './server/auth-server.js',
+      ignore_watch : ["node_modules"],
+      watch: true,
+    }
   ],
 };
