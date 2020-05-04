@@ -61,14 +61,14 @@ class UserLibrary {
     }
 
     static loginUser(username, password, res) {
-        this._getUserByUsername(username).then((error, user) => {
+        this._getUserByUsername(username).then((user, error) => {
             if (error) {
                 console.log(error);
                 res.send({error, });
                 return;
             }
 
-            if (user.password === password) {
+            if (user && user.password === password) {
                 res.send({
                     userId: user._id,
                     token: user.token,
@@ -106,7 +106,7 @@ class UserLibrary {
     }
 
     static verifyUserToken(userId, token, res) {
-        this._getUserById(userId).then((error, user) => {
+        this._getUserById(userId).then((user, error) => {
             if (error) {
                 console.log(error);
                 res.send({
@@ -115,7 +115,7 @@ class UserLibrary {
             }
 
             let valid = false;
-            if (user.token == token) valid = true;
+            if (user && user.token === token) valid = true;
 
             if (res) {
                 res.send({

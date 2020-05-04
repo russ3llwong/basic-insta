@@ -1,20 +1,28 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { connect } from 'react-redux';
-import { updateMessages, handlTextChange, submitMessage } from './redux/actions/messageActions';
-//import './App.css';
-import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import setAuthToken from './utils/setAuthToken';
+import {setCurrentUser, logoutUser} from './redux/actions/authActions';
+import PrivateRoute from './PrivateRoute';
+import Feed from './pages/Feed';
 
 const App = ({ dispatch }) => {
   
+  if (localStorage.token){
+    const token = localStorage.token;
+    setAuthToken(token);
+    dispatch(setCurrentUser(token))
+  }
+
   return (
     <div className="App">
        <Switch>
         <Route exact path="/" component={Login} /> 
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
+        <PrivateRoute exact path="/feed" component={Feed} />
       </Switch>
     </div>
   );
