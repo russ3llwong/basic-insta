@@ -9,9 +9,12 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import messageReducer from './redux/reducers/messageReducer';
 import { insertMessage } from './redux/actions/messageActions';
 import { BrowserRouter as Router } from 'react-router-dom';
+import authReducer from './redux/reducers/authReducer';
+import errorReducer from './redux/reducers/errorReducer';
 
 const rootReducer = combineReducers({
-  messageReducer,
+  auth: authReducer,
+  errors: errorReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

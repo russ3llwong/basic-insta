@@ -3,15 +3,18 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-
-import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
+
+//auth and redux
+import PropTypes from "prop-types";
+import { Link, withRouter } from 'react-router-dom'
+import { connect } from "react-redux";
+import { registerUser } from "../redux/actions/authActions";
+import Login from './Login';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -45,14 +48,30 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function SignUp() {
+const SignUp = ({ registerUser, history }) => {
     const classes = useStyles();
+    const [userEmail, setUserEmail] = React.useState("");
+    const [userName, setUserName] = React.useState("");
+    const [userFName, setUserFName] = React.useState("");
+    const [userPassword, setUserPassword] = React.useState("");
+    const [errors, setErrors] = React.useState({});
+
+    const submit = e => {
+        e.preventDefault();
+        const newUser = {
+            username: userName,
+            password: userPassword,
+            name: userFName,
+            email: userEmail, 
+          };
+        registerUser(newUser, history)
+    }
 
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
-            <Grid item xs={false} sm={4} md={7} className={classes.image} />
-            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} className={classes.container} square>
+            <Grid item xs={false} sm={4} md={8} className={classes.image} />
+            <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
@@ -60,29 +79,33 @@ export default function SignUp() {
                     <Typography component="h1" variant="h4">
                         Sign Up
           </Typography>
-                    <form className={classes.form} noValidate>
+                <form className={classes.form} onSubmit={submit} noValidate>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     autoComplete="fname"
-                                    name="firstName"
+                                    name="fullName"
                                     variant="outlined"
                                     required
                                     fullWidth
-                                    id="firstName"
-                                    label="First Name"
+                                    id="fullName"
+                                    label="Full Name"
                                     autoFocus
+                                    value={userFName}
+                                    onChange={e => setUserFName(e.target.value)}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     variant="outlined"
                                     required
                                     fullWidth
-                                    id="lastName"
-                                    label="Last Name"
-                                    name="lastName"
-                                    autoComplete="lname"
+                                    id="userName"
+                                    label="Username"
+                                    name="userName"
+                                    autoComplete="uname"
+                                    value={userName}
+                                    onChange={e => setUserName(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -94,6 +117,8 @@ export default function SignUp() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
+                                    value={userEmail}
+                                    onChange={e => setUserEmail(e.target.value)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -106,6 +131,8 @@ export default function SignUp() {
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
+                                    value={userPassword}
+                                    onChange={e => setUserPassword(e.target.value)}
                                 />
                             </Grid>
                         </Grid>
@@ -116,12 +143,12 @@ export default function SignUp() {
                             className={classes.submit}
                         >
                             Sign Up
-          </Button>
+                        </Button>
                         <Grid container justify="flex-start">
                             <Grid item>
                                 <Link to="/login" variant="body2">
                                     Already have an account? <b>Sign in</b>
-              </Link>
+                                </Link>
                             </Grid>
                         </Grid>
                     </form>
@@ -130,3 +157,19 @@ export default function SignUp() {
         </Grid>
     );
 } 
+
+SignUp.propTypes = {
+    registerUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => ({
+    auth: state.auth,
+    errors: state.errors
+  });
+
+  export default connect(
+    mapStateToProps,
+    { registerUser }
+  )(withRouter(SignUp)); 

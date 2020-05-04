@@ -45,12 +45,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login() {
     const classes = useStyles();
+    const [userName, setUserName] = React.useState("");
+    const [userPassword, setUserPassword] = React.useState("");
+
 
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline />
-            <Grid item xs={false} sm={4} md={7} className={classes.image} />
-            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} className={classes.container} square>
+            <Grid item xs={false} sm={4} md={8} className={classes.image} />
+            <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
@@ -58,17 +61,20 @@ export default function Login() {
                     <Typography component="h1" variant="h4">
                         Sign in
           </Typography>
-                    <form className={classes.form} noValidate>
+                <form className={classes.form} onSubmit={e => e.preventDefault()} noValidate>
                         <TextField
                             variant="outlined"
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
+                            value={userName}
+                            onChange={e => setUserName(e.target.value)}
+
                         />
                         <TextField
                             variant="outlined"
@@ -80,6 +86,8 @@ export default function Login() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={userPassword}
+                            onChange={e => setUserPassword(e.target.value)}
                         />
                         <Button
                             type="submit"
