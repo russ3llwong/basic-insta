@@ -6,12 +6,11 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { insertMessage } from './redux/actions/messageActions';
 import { BrowserRouter as Router } from 'react-router-dom';
-import authReducer from './redux/reducers/authReducer';
-import errorReducer from './redux/reducers/errorReducer';
 import postReducer from './redux/reducers/postReducer'
 import commentReducer from './redux/reducers/commentReducer'
+import authReducer from './redux/reducers/authReducer';
+import errorReducer from './redux/reducers/errorReducer';
 
 const rootReducer = combineReducers({
   posts: postReducer,
@@ -23,36 +22,13 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
-const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (window.location.port && `:${window.location.port}`) + '/websocket');
+// export const getAllPosts = (state) => {
+//   return postReducer.getAllPosts(state.posts);
+// };
 
-export const getAllPosts = (state) => {
-  return postReducer.getAllPosts(state.posts);
-};
-
-export const getPostById = (state, id) => {
-  return postReducer.getPostById(state.posts, id);
-};
-
-webSocket.onmessage = (message) => {
-  const messageObject = JSON.parse(message.data);
-  console.log(messageObject);
-  switch(messageObject.type) {
-    case 'UPDATE_FEED':
-      // TODO: UPDATE FEED... make an axios request or something
-      console.log('UPDATE FEED');
-      break;
-    case 'UPDATE_COMMENT':
-      // TODO: UPDATE COMMENT... make an axios request or something
-      console.log('UPDATE COMMENT', messageObject.postId);
-      break;
-    default:
-      console.log('Unexpected message.');
-  }
-};
-
-webSocket.onerror = e => {
-  console.log(e);
-}
+// export const getPostById = (state, id) => {
+//   return postReducer.getPostById(state.posts, id);
+// };
 
 ReactDOM.render(
   <Provider store={store}>
