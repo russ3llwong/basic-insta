@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import { Link, withRouter } from 'react-router-dom'
 import { connect } from "react-redux";
 import { loginUser } from "../redux/actions/authActions";
-
+import md5 from 'md5'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -54,18 +54,46 @@ const Login = ({ loginUser, auth, history }) => {
     const [userName, setUserName] = React.useState("");
     const [userPassword, setUserPassword] = React.useState("");
 
+    // error validator
+    const [userError, setUserError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+
+    // error message
+    const [userMessage, setUserMessage] = React.useState('');
+    const [passwordMessage,setPasswordMessage] = React.useState('');
+
+
+    function validate() {
+        if (userName === '')
+            setUserError(true);
+            setUserMessage('username cannot be blank');
+        if (userPassword === '')
+            setPasswordError(true);
+            setPasswordMessage('password cannot be blank');
+        return userName !== '' && userPassword !== '';
+    }
+
     const submit = async (e) => {
         e.preventDefault();
         const userData = {
             username: userName,
-            password: userPassword,
+            password: md5(userPassword),
         };
-        loginUser(userData)
+        if (validate()) {
+            loginUser(userData);
+            if (!auth.isAuthenticated) {
+                setPasswordMessage('invalid password');
+                setUserError(false);
+                setPasswordError(true);
+            }  
+        }
+   
     }
 
     if (auth.isAuthenticated) {
         history.push("/feed");
     }
+
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -73,11 +101,12 @@ const Login = ({ loginUser, auth, history }) => {
             <Grid item xs={false} sm={4} md={8} className={classes.image} />
             <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} className={classes.container} square>
                 <div className={classes.paper}>
-                <Typography component="h1" variant="h3" className={classes.icon}>
+                    <Typography component="h1" variant="h3" className={classes.icon}>
                         basic.
-                </Typography>
-                <form className={classes.form} onSubmit={submit} noValidate>
+          </Typography>
+                    <form className={classes.form} onSubmit={submit} noValidate>
                         <TextField
+                            error = {userError}
                             variant="outlined"
                             margin="normal"
                             required
@@ -88,10 +117,11 @@ const Login = ({ loginUser, auth, history }) => {
                             autoComplete="username"
                             autoFocus
                             value={userName}
+                            helperText ={userError ? userMessage :''}
                             onChange={e => setUserName(e.target.value)}
-
                         />
                         <TextField
+                            error = {passwordError}
                             variant="outlined"
                             margin="normal"
                             required
@@ -102,6 +132,7 @@ const Login = ({ loginUser, auth, history }) => {
                             id="password"
                             autoComplete="current-password"
                             value={userPassword}
+                            helperText ={passwordError ? passwordMessage :''}
                             onChange={e => setUserPassword(e.target.value)}
                         />
                         <Button
@@ -125,19 +156,16 @@ const Login = ({ loginUser, auth, history }) => {
         </Grid>
     );
 }
-
 Login.propTypes = {
     loginUser: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired
 }
-
 const mapStateToProps = state => ({
     auth: state.auth,
     errors: state.errors
 });
-
 export default connect(
     mapStateToProps,
     { loginUser }
-)(withRouter(Login)); 
+)(withRouter(Login));
