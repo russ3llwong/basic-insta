@@ -140,7 +140,6 @@ class UserLibrary {
                     error,
                 });
             }
-
             let valid = false;
             if (user && String(token) === String(user.token)) valid = true;
 
