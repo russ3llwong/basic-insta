@@ -6,8 +6,11 @@ const mongoose = require('mongoose');
 const UserLib = require('./library/user-lib.js');
 
 // TODO: Use config file or env vars for database name and port
-const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
+const {MONGODB_URI} = require('./library/consts.js');
+
 const port = 3002;
+
+// const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database'
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 mongoose.connection.on('connected', () => {

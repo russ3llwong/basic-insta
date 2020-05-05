@@ -6,6 +6,8 @@ const app = express();
 const appServer = server.createServer(app);
 const apiProxy = httpProxy.createProxyServer(app);
 
+const {WEBSOCKET_HOST, AUTH_SERVER_HOST, USER_SERVER_HOST, BASICGRAM_HOST, FRONT_END_HOST, GATEWAY_HOST} = require('./library/consts.js');
+
 const GATEWAY_PORT = 4000;
 
 const wsProxy = httpProxy.createProxyServer({
@@ -30,41 +32,36 @@ appServer.on('upgrade', (req, socket, head) => {
   wsProxy.ws(req, socket, head);
 });
 
-const fotogramHost = process.env.FOTOGRAM_HOST || 'http://localhost:5000';
-console.log(`Fotogram end proxies to: ${fotogramHost}`);
-app.all('/fotogram*', (req, res) => {
-  apiProxy.web(req, res, { target: fotogramHost });
-});
 
-const websocketHost = process.env.WEBSOCKET_HOST || 'http://localhost:6000/websocket';
-console.log(`WebSocket end proxies to: ${websocketHost}`);
+console.log(`WebSocket end proxies to: ${WEBSOCKET_HOST}/websocket`);
 app.all('/websocket*', (req, res) => {
   console.log('incoming ws');
-  apiProxy.web(req, res, { target: websocketHost });
+  apiProxy.web(req, res, { target: `${WEBSOCKET_HOST}/websocket` });
 });
 
-const authServerHost = process.env.AUTH_SERVER_HOST || 'http://localhost:3002';
-console.log(`Auth service proxies to: ${authServerHost}`);
+console.log(`Basicgram end proxies to: ${BASICGRAM_HOST}`);
+app.all('/basicgrams*', (req, res) => {
+  apiProxy.web(req, res, { target: BASICGRAM_HOST });
+});
+
+console.log(`Auth service proxies to: ${AUTH_SERVER_HOST}`);
+// for auth
 app.all('/auth*', (req, res) => {
-  // for auth
   console.log("Routing to Auth: ", req.url);
-  apiProxy.web(req, res, { target: authServerHost });
+  apiProxy.web(req, res, { target: AUTH_SERVER_HOST });
 });
 
-const userServerHost = process.env.USER_SERVER_HOST || 'http://localhost:3003';
-console.log(`User service proxies to: ${userServerHost}`);
+console.log(`User service proxies to: ${USER_SERVER_HOST}`);
 // for user
 app.all('/user*', (req, res) => {
   console.log("Routing to User: ", req.url);
-  apiProxy.web(req, res, { target: userServerHost });
+  apiProxy.web(req, res, { target: USER_SERVER_HOST });
 });
 
-const frontEndHost = process.env.FRONT_END_HOST || 'http://localhost:3000';
-console.log(`Front end proxies to: ${frontEndHost}`);
-
+console.log(`Front end proxies to: ${FRONT_END_HOST}`);
 app.all('/*', (req, res) => {
   // for frontend
-  apiProxy.web(req, res, { target: frontEndHost });
+  apiProxy.web(req, res, { target: FRONT_END_HOST });
 });
 
 appServer.listen(GATEWAY_PORT);

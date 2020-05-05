@@ -6,8 +6,11 @@ const mongoose = require('mongoose');
 const UserLib = require('./library/user-lib.js');
 
 // TODO: Use config file or env vars for database name and port
-const MONGODB_URI = 'mongodb://localhost:27017/basicgram-database';
+const {MONGODB_URI} = require('./library/consts.js');
+
 const port = 3003;
+
+// const MONGODB_URI = 'mongodb://mongodb:27017/basicgram-database';
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 mongoose.connection.on('connected', () => {
@@ -29,13 +32,11 @@ app.use(bodyParser());
  * @param userId of the user to get
  */
 app.get('/user/:userId', (req, res) => {
-    
     let userId = req.params.userId;
     UserLib.getUserInfo(userId, res);
 });
 
 app.put('/user/changePassword/:userId', (req, res) => {
-    
     let userId = req.params.userId;
     let oldPassword = req.body.oldPassword;
     let newPassword = req.body.newPassword;
